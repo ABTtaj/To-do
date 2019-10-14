@@ -1,13 +1,13 @@
 <template>
     <div class="container">
-        <sprint-list></sprint-list>
+        <project-add></project-add>
     </div>
 </template>
 <script>
-import SprintList from './components/sprints/SprintList.vue';
+import ProjectAdd from './components/projects/ProjectAdd.vue';
 export default {
     components:{
-        SprintList
+        ProjectAdd
     }
 }
 </script>

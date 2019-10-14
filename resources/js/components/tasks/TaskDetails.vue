@@ -8,7 +8,7 @@
     >
         <div class="card-body">
             <h5 class="card-title" :class="{'task-done':data.isDone}">{{data.title}}</h5>
-            <p class="card-text" :class="{'task-done':data.isDone}">{{data.description}}</p>
+            <p class="card-text my-4" :class="{'task-done':data.isDone}">{{data.description}}</p>
             <div class="d-flex justify-content-end">
                 <button class="btn btn-success" @click="taskDone" v-if="!data.isDone">Done</button>
                 <button class="btn btn-light" @click="unDoneTask" v-if="data.isDone">Not Done Yet</button>

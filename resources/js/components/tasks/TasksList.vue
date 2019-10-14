@@ -40,10 +40,6 @@
                     @taskUnDone="onTaskIsUnDone()"
                     @taskDeleted="onTaskDeleted()"
                 ></task-details>
-                
-                <div class="alert alert-info" v-if="!tasks.length" role="alert">
-                    You don't have tasks for this mission
-                </div>
             </div>
             <div v-if="addNewTask || tasks.length === 0">
                 <div class="my-4 text-center">
