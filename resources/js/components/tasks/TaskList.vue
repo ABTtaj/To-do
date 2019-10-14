@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-4">
             <div class="my-4 text-center">
-                <h4>Task List</h4>
+                <h4>Tasks List</h4>
             </div>
             <ul class="list-group"> 
                 <li class="list-group-item task-element text-white font-italic h5"
@@ -36,9 +36,9 @@
                 <task-details
                     v-if="choisenTask"
                     :data="choisenTask"
-                    @taskDone="onTaskIsDone(choisenTask)"
-                    @taskUnDone="onTaskIsUnDone(choisenTask)"
-                    @taskDeleted="onTaskDeleted(choisenTask)"
+                    @taskDone="onTaskIsDone()"
+                    @taskUnDone="onTaskIsUnDone()"
+                    @taskDeleted="onTaskDeleted()"
                 ></task-details>
                 
                 <div class="alert alert-info" v-if="!tasks.length" role="alert">
@@ -63,7 +63,7 @@ export default {
     data(){
         return {
             tasks:[],
-            dataTasks:[
+            tasksData:[
                 {
                     id:1,
                     title:'Lorem ispsqf ',
@@ -101,7 +101,8 @@ export default {
     },
     computed:{
         choisenTask(){
-            return this.taskDetail ? this.taskDetail : (this.tasks.length ? this.tasks[0] : null);
+            this.taskDetail = this.taskDetail ? this.taskDetail : (this.tasks.length ? this.tasks[0] : null);
+            return this.taskDetail;
         }
     },
     components:{
@@ -113,38 +114,40 @@ export default {
             this.addNewTask=false;
             this.taskDetail=task;
         },
-        onTaskIsDone(task){
-            task.isDone=true;
+        onTaskIsDone(){
+            this.choisenTask.isDone=true;
         },
-        onTaskIsUnDone(task){
-            task.isDone=false;
+        onTaskIsUnDone(){
+            this.choisenTask.isDone=false;
         },
         onNewTaskCreated(newTask){
             newTask.id=(this.tasks.length + 1);
             this.tasks.unshift(newTask);
+            this.addNewTask=false;
+            this.taskDetail=newTask;
         },
-        onTaskDeleted(deletedTask){
+        onTaskDeleted(){
             this.tasks=this.tasks.filter(task=>{
-                return !(deletedTask.id === task.id);
+                return this.choisenTask.id !== task.id;
             });
             this.taskDetail = null;
         },
         giveAll(){
-            this.tasks = this.dataTasks;
+            this.tasks = this.tasksData;
         },
         filterByDone(){
-            this.tasks = this.dataTasks.filter(task => {
+            this.tasks = this.tasksData.filter(task => {
                 return task.isDone;
             });
         },
         filterByNotDone(){
-            this.tasks = this.dataTasks.filter(task => {
+            this.tasks = this.tasksData.filter(task => {
                 return !task.isDone;
             });
         }
     },
     created(){
-        this.tasks=this.dataTasks;
+        this.tasks=this.tasksData;
     }
 }
 </script>

@@ -1,13 +1,13 @@
 <template>
     <div class="container">
-        <task-list></task-list>
+        <sprint-list></sprint-list>
     </div>
 </template>
 <script>
-import TaskList from './components/Tasks/TaskList.vue';
+import SprintList from './components/sprints/SprintList.vue';
 export default {
     components:{
-        TaskList
+        SprintList
     }
 }
 </script>
