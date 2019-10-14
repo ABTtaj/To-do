@@ -17,8 +17,9 @@
                     </li>
                 </ul>
                 <div class="my-4">
-                    <button class="btn btn-success btn-block" @click="sortByTasksDone">Sort By Tasks Done</button>
-                    <button class="btn btn-danger btn-block" @click="sortByTasksNotDone">Sort By Tasks Not Done</button>
+                    <h5 class="text-center my-3">Sort By</h5>
+                    <button class="btn btn-success btn-block" @click="sortByTasksDone">Tasks Done</button>
+                    <button class="btn btn-danger btn-block" @click="sortByTasksNotDone">Tasks Not Done</button>
                 </div>
             </div>
             <div v-if="!addNewSprint && sprints.length">

@@ -1,13 +1,8 @@
 <template>
     <div>
         <div class="row my-4">
-            <div class="col text-center mt-4 d-flex justify-content-between">
-                <div>
-                    <h4>Projects List</h4>
-                </div>
-                <div>
-                    <button class="btn btn-primary">Add New Project</button>
-                </div>
+            <div class="col text-center mt-4">
+                <h4>Projects List</h4>
             </div>
         </div>
         <div class="row" v-if="projects.length">

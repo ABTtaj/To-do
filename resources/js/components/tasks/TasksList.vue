@@ -19,7 +19,7 @@
                 </li>
             </ul>
             <div v-if="tasks.length" class="mb-4">
-                <h5 class="text-center my-3">Filters</h5>
+                <h5 class="text-center my-3">Filter By</h5>
                 <button class="btn btn-success btn-block" @click="filterByDone">Done</button>
                 <button class="btn btn-danger btn-block" @click="filterByNotDone">Not Done</button>
                 <button class="btn btn-primary btn-block" @click="giveAll">All</button>
