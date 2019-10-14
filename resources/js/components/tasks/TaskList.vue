@@ -24,12 +24,12 @@
                 <button class="btn btn-danger btn-block" @click="filterByNotDone">Not Done</button>
                 <button class="btn btn-primary btn-block" @click="giveAll">All</button>
             </div>
-            <div>
+            <div v-if="!addNewTask && tasks.length">
                 <button class="btn btn-secondary btn-block" @click="addNewTask=!addNewTask">Create New Task</button>
             </div>
         </div>
         <div class="col-md-8">
-            <div v-if="!addNewTask">
+            <div v-if="!addNewTask && tasks.length">
                 <div class="my-4 text-center">
                     <h4>Task Detail</h4>
                 </div>
@@ -45,7 +45,7 @@
                     You don't have tasks for this mission
                 </div>
             </div>
-            <div v-else>
+            <div v-if="addNewTask || tasks.length === 0">
                 <div class="my-4 text-center">
                     <h4>Create New Task</h4>
                 </div>

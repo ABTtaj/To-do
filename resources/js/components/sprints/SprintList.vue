@@ -1,30 +1,32 @@
 <template>
     <div class="row">
         <div class="col-md-4">
-            <div class="my-4 text-center">
-                <h4>Sprints List</h4>
+            <div v-if="sprints.length" class="mb-4">
+                <div class="my-4 text-center">
+                    <h4>Sprints List</h4>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item sprint-element d-flex justify-content-between" @click="choiseASprint(sprint)" v-for="sprint in sprints" :key="sprint.id">
+                        <span>
+                            {{sprint.title}}
+                        </span>
+                        <div>
+                            <span class="badge badge-success">{{sprint.tasksDone}}</span>
+                            <span class="badge badge-danger">{{sprint.tasksNotDone}}</span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="my-4">
+                    <button class="btn btn-success btn-block" @click="sortByTasksDone">Sort By Tasks Done</button>
+                    <button class="btn btn-danger btn-block" @click="sortByTasksNotDone">Sort By Tasks Not Done</button>
+                </div>
             </div>
-            <div class="my-4">
-                <button class="btn btn-success btn-block" @click="sortByTasksDone">Sort By Tasks Done</button>
-                <button class="btn btn-danger btn-block" @click="sortByTasksNotDone">Sort By Tasks Not Done</button>
-            </div>
-            <ul class="list-group">
-                <li class="list-group-item sprint-element d-flex justify-content-between" @click="choiseASprint(sprint)" v-for="sprint in sprints" :key="sprint.id">
-                    <span>
-                        {{sprint.title}}
-                    </span>
-                    <div>
-                        <span class="badge badge-success">{{sprint.tasksDone}}</span>
-                        <span class="badge badge-danger">{{sprint.tasksNotDone}}</span>
-                    </div>
-                </li>
-            </ul>
-            <div class="my-4">
+            <div v-if="!addNewSprint && sprints.length">
                 <button class="btn btn-secondary btn-block" @click="addNewSprint = true">Create New Task</button>
             </div>
         </div>
         <div class="col-md-8">
-            <div v-if="!addNewSprint">
+            <div v-if="!addNewSprint && sprints.length">
                 <div class="my-4 text-center">
                     <h4>Sprint Detail</h4>
                 </div>
@@ -34,7 +36,7 @@
                     @sprintDeleted="onSprintDeleted()"
                 ></sprint-details>
             </div>
-            <div v-if="addNewSprint">
+            <div v-if="addNewSprint || sprints.length === 0">
                 <div class="my-4 text-center">
                     <h4>Create New Sprint</h4>
                 </div>
@@ -111,7 +113,8 @@ export default {
         onSprintDeleted(){
             this.sprints = this.sprints.filter(sprint => {
                 return this.choisenSprint.id !== sprint.id;
-            })
+            });
+            this.sprintDetail=null;
         },
         sortByTasksDone(){
             this.sprints.sort((a,b)=>{

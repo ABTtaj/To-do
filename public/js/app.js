@@ -2001,6 +2001,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2064,6 +2066,7 @@ __webpack_require__.r(__webpack_exports__);
       this.sprints = this.sprints.filter(function (sprint) {
         return _this.choisenSprint.id !== sprint.id;
       });
+      this.sprintDetail = null;
     },
     sortByTasksDone: function sortByTasksDone() {
       var _this2 = this;
@@ -20583,86 +20586,92 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
     _c("div", { staticClass: "col-md-4" }, [
-      _vm._m(0),
-      _vm._v(" "),
-      _c("div", { staticClass: "my-4" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-success btn-block",
-            on: { click: _vm.sortByTasksDone }
-          },
-          [_vm._v("Sort By Tasks Done")]
-        ),
-        _vm._v(" "),
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-danger btn-block",
-            on: { click: _vm.sortByTasksNotDone }
-          },
-          [_vm._v("Sort By Tasks Not Done")]
-        )
-      ]),
-      _vm._v(" "),
-      _c(
-        "ul",
-        { staticClass: "list-group" },
-        _vm._l(_vm.sprints, function(sprint) {
-          return _c(
-            "li",
-            {
-              key: sprint.id,
-              staticClass:
-                "list-group-item sprint-element d-flex justify-content-between",
-              on: {
-                click: function($event) {
-                  return _vm.choiseASprint(sprint)
-                }
-              }
-            },
-            [
-              _c("span", [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(sprint.title) +
-                    "\n                "
+      _vm.sprints.length
+        ? _c("div", { staticClass: "mb-4" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c(
+              "ul",
+              { staticClass: "list-group" },
+              _vm._l(_vm.sprints, function(sprint) {
+                return _c(
+                  "li",
+                  {
+                    key: sprint.id,
+                    staticClass:
+                      "list-group-item sprint-element d-flex justify-content-between",
+                    on: {
+                      click: function($event) {
+                        return _vm.choiseASprint(sprint)
+                      }
+                    }
+                  },
+                  [
+                    _c("span", [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(sprint.title) +
+                          "\n                    "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", [
+                      _c("span", { staticClass: "badge badge-success" }, [
+                        _vm._v(_vm._s(sprint.tasksDone))
+                      ]),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "badge badge-danger" }, [
+                        _vm._v(_vm._s(sprint.tasksNotDone))
+                      ])
+                    ])
+                  ]
                 )
-              ]),
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "my-4" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-success btn-block",
+                  on: { click: _vm.sortByTasksDone }
+                },
+                [_vm._v("Sort By Tasks Done")]
+              ),
               _vm._v(" "),
-              _c("div", [
-                _c("span", { staticClass: "badge badge-success" }, [
-                  _vm._v(_vm._s(sprint.tasksDone))
-                ]),
-                _vm._v(" "),
-                _c("span", { staticClass: "badge badge-danger" }, [
-                  _vm._v(_vm._s(sprint.tasksNotDone))
-                ])
-              ])
-            ]
-          )
-        }),
-        0
-      ),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger btn-block",
+                  on: { click: _vm.sortByTasksNotDone }
+                },
+                [_vm._v("Sort By Tasks Not Done")]
+              )
+            ])
+          ])
+        : _vm._e(),
       _vm._v(" "),
-      _c("div", { staticClass: "my-4" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-secondary btn-block",
-            on: {
-              click: function($event) {
-                _vm.addNewSprint = true
-              }
-            }
-          },
-          [_vm._v("Create New Task")]
-        )
-      ])
+      !_vm.addNewSprint && _vm.sprints.length
+        ? _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-secondary btn-block",
+                on: {
+                  click: function($event) {
+                    _vm.addNewSprint = true
+                  }
+                }
+              },
+              [_vm._v("Create New Task")]
+            )
+          ])
+        : _vm._e()
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "col-md-8" }, [
-      !_vm.addNewSprint
+      !_vm.addNewSprint && _vm.sprints.length
         ? _c(
             "div",
             [
@@ -20683,7 +20692,7 @@ var render = function() {
           )
         : _vm._e(),
       _vm._v(" "),
-      _vm.addNewSprint
+      _vm.addNewSprint || _vm.sprints.length === 0
         ? _c(
             "div",
             [
