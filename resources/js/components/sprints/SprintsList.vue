@@ -1,14 +1,14 @@
 <template>
     <div class="row">
-        <div class="col-md-4">
-            <div v-if="sprints.length" class="mb-4">
-                <div class="my-4 text-center">
+        <div class="col-md-4" v-if="sprints.length">
+            <div v-if="sprints.length">
+                <div class="text-center mb-5">
                     <h4>Sprints List</h4>
                 </div>
-                <ul class="list-group">
+                <ul class="list-group shadow">
                     <li class="list-group-item sprint-element d-flex justify-content-between" @click="choiseASprint(sprint)" v-for="sprint in sprints" :key="sprint.id">
                         <span>
-                            {{sprint.title}}
+                            {{sprint.title | truncate}}
                         </span>
                         <div>
                             <span class="badge badge-success">{{sprint.tasksDone}}</span>
@@ -16,33 +16,44 @@
                         </div>
                     </li>
                 </ul>
-                <div class="my-4">
-                    <h5 class="text-center my-3">Sort By</h5>
-                    <button class="btn btn-success btn-block" @click="sortByTasksDone">Tasks Done</button>
-                    <button class="btn btn-danger btn-block" @click="sortByTasksNotDone">Tasks Not Done</button>
+                <div>
+                    <h5 class="text-center my-4">Sort By</h5>
+                    <button class="btn btn-success btn-block shadow" @click="sortByTasksDone">Tasks Done</button>
+                    <button class="btn btn-danger btn-block shadow" @click="sortByTasksNotDone">Tasks Not Done</button>
                 </div>
             </div>
-            <div v-if="!addNewSprint && sprints.length">
-                <button class="btn btn-secondary btn-block" @click="addNewSprint = true">Create New Task</button>
+            <div v-if="!addNewSprint && sprints.length" class="mt-4">
+                <button class="btn btn-secondary btn-block shadow" @click="addNewSprint = true">Create New Task</button>
             </div>
         </div>
-        <div class="col-md-8">
-            <div v-if="!addNewSprint && sprints.length">
-                <div class="my-4 text-center">
+        <div 
+            :class="{
+                'col-md-8':sprints.length,
+                'col':sprints.length === 0
+            }"
+        >
+            <div v-if="!addNewSprint && sprints.length && !editMode">
+                <div class="text-center mb-5">
                     <h4>Sprint Detail</h4>
                 </div>
                 <sprint-details
                     v-if="choisenSprint"
                     :data="choisenSprint"
                     @sprintDeleted="onSprintDeleted()"
+                    @sprintEditing="onSprintEditing()"
                 ></sprint-details>
             </div>
             <div v-if="addNewSprint || sprints.length === 0">
-                <div class="my-4 text-center">
-                    <h4>Create New Sprint</h4>
-                </div>
                 <sprint-add
+                    mode="create"
                     @newSprintCreated="onNewSprintCreated"
+                ></sprint-add>
+            </div>
+            <div v-if="editMode">
+                <sprint-add
+                    mode="edit"
+                    :model="choisenSprint"
+                    @sprintEdited="onSprintEdited($event)"
                 ></sprint-add>
             </div>
         </div>
@@ -62,7 +73,8 @@ export default {
             sprintDetail:null,
             addNewSprint:false,
             sortByTasksDoneFactor:1,
-            sortByTasksNotDoneFactor:1
+            sortByTasksNotDoneFactor:1,
+            editMode:false
         }
     },
     computed:{
@@ -77,7 +89,6 @@ export default {
             this.sprintDetail = sprint;
         },
         onNewSprintCreated(newSprint){
-            newSprint.id=(this.sprints.length + 1);
             this.sprints.unshift(newSprint);
             this.addNewSprint=false;
             this.sprintDetail=newSprint;
@@ -87,6 +98,16 @@ export default {
                 return this.choisenSprint.id !== sprint.id;
             });
             this.sprintDetail=null;
+        },
+        onSprintEditing(){
+            this.editMode=true;
+        },
+        onSprintEdited(editedSprint){
+            this.editMode=false;
+            this.sprints = this.sprints.map(sprint => {
+                return editedSprint.id === sprint.id ? editedSprint : sprint;
+            });
+            this.sprintDetail=editedSprint;
         },
         sortByTasksDone(){
             this.sprints.sort((a,b)=>{

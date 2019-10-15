@@ -36,9 +36,10 @@ class TaskController extends Controller
                 'description.required'=>'Enter a valid description'
             ]);
 
-            $sprint->tasks()->create($arguments);
+            $task = $sprint->tasks()->create($arguments);
 
             return [
+                'id'=>$task->id,
                 'message'=>'Task Created',
                 'status'=>true
             ];
@@ -73,7 +74,8 @@ class TaskController extends Controller
         try{
             $arguments = request()->validate([
                 'title'=>'required',
-                'description'=>'required'
+                'description'=>'required',
+                'is_done'=>'nullable'
             ],
             [
                 'title.required'=>'Enter a valid title',

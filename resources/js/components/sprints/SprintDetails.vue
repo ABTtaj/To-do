@@ -1,9 +1,9 @@
 <template>
     <div 
-        class="card"  
+        class="card shadow"  
     >
-        <div class="card-body">
-            <h5 class="card-title d-flex justify-content-between">
+        <div class="card-header">
+            <h5 class="card-title d-flex justify-content-between m-0">
                 <span>
                     {{data.title}}
                 </span>
@@ -12,12 +12,17 @@
                     <span class="badge badge-danger">{{data.tasksNotDone}}</span>
                 </div>
             </h5>
-            <div class="card-text my-4">
+        </div>
+        <div class="card-body">
+            <div class="card-text mx-4 my-2">
                 {{data.description}}
             </div>
-            <div class="d-flex justify-content-end">
-                <router-link tag="button" :to="'/sprints/'+data.id+'/tasks'" class="btn btn-primary">Show Tasks</router-link>
-                <button class="btn btn-danger ml-2" @click="deleteSprint()">Delete</button>
+            <div class="d-flex justify-content-between mt-3">
+                <router-link tag="button" :to="'/sprints/'+data.id+'/tasks'" class="btn btn-link">Show Tasks</router-link>
+                <div>
+                    <button class="btn btn-primary shadow" @click="editSprint()">Edit</button>
+                    <button class="btn btn-danger ml-2 shadow" @click="deleteSprint()">Delete</button>
+                </div>
             </div>
         </div>
     </div>
@@ -29,7 +34,12 @@ export default {
     ],
     methods:{
         deleteSprint(){
-            this.$emit('sprintDeleted');
+            axios.delete('/api/sprints/'+this.data.id).then(({data})=>{
+                this.$emit('sprintDeleted');
+            });
+        },
+        editSprint(){
+            this.$emit('sprintEditing');
         }
     }
 }

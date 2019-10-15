@@ -1887,19 +1887,59 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       newProject: {
         title: "",
-        description: "",
-        tasksNotDone: 0
-      }
+        description: ""
+      },
+      mode: 'create'
     };
   },
   methods: {
     createNewProject: function createNewProject() {
-      console.log(this.newProject);
+      var _this = this;
+
+      axios.post('/api/projects', this.newProject).then(function (_ref) {
+        var data = _ref.data;
+
+        _this.$router.push({
+          name: 'projects_list'
+        });
+      });
+    },
+    editProject: function editProject() {
+      var _this2 = this;
+
+      axios.put('/api/projects/' + this.$route.params.project_id, this.newProject).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this2.$router.push({
+          name: 'projects_list'
+        });
+      });
+    }
+  },
+  mounted: function mounted() {
+    var _this3 = this;
+
+    if (this.$route.params.project_id) {
+      axios.get('/api/projects/' + this.$route.params.project_id).then(function (_ref3) {
+        var data = _ref3.data;
+        _this3.newProject = data;
+        _this3.mode = 'edit';
+      });
     }
   }
 });
@@ -1932,11 +1972,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['data'],
   methods: {
     deleteProject: function deleteProject() {
-      this.$emit('projectDeleted');
+      var _this = this;
+
+      axios["delete"]('/api/projects/' + this.data.id).then(function (_ref) {
+        var data = _ref.data;
+
+        _this.$emit('projectDeleted');
+      });
     }
   }
 });
@@ -1953,12 +2004,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ProjectDetails_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProjectDetails.vue */ "./resources/js/components/projects/ProjectDetails.vue");
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -2012,6 +2057,25 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2030,19 +2094,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['mode', 'model'],
   data: function data() {
     return {
       newSprint: {
         title: "",
-        description: "",
-        tasksDone: 0,
-        tasksNotDone: 0
+        description: ""
       }
     };
   },
   methods: {
     createNewSprint: function createNewSprint() {
-      this.$emit('newSprintCreated', this.newSprint);
+      var _this = this;
+
+      axios.post('/api/projects/' + this.$route.params.project_id + '/sprints', this.newSprint).then(function (_ref) {
+        var data = _ref.data;
+        _this.newSprint.id = data.id;
+
+        _this.$emit('newSprintCreated', _this.newSprint);
+      });
+    },
+    editSprint: function editSprint() {
+      var _this2 = this;
+
+      axios.put('/api/sprints/' + this.newSprint.id, this.newSprint).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this2.$emit('sprintEdited', _this2.newSprint);
+      });
+    }
+  },
+  mounted: function mounted() {
+    if (this.mode === "edit") {
+      this.newSprint = _objectSpread({}, this.model);
     }
   }
 });
@@ -2082,11 +2166,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['data'],
   methods: {
     deleteSprint: function deleteSprint() {
-      this.$emit('sprintDeleted');
+      var _this = this;
+
+      axios["delete"]('/api/sprints/' + this.data.id).then(function (_ref) {
+        var data = _ref.data;
+
+        _this.$emit('sprintDeleted');
+      });
+    },
+    editSprint: function editSprint() {
+      this.$emit('sprintEditing');
     }
   }
 });
@@ -2154,6 +2252,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2167,7 +2276,8 @@ __webpack_require__.r(__webpack_exports__);
       sprintDetail: null,
       addNewSprint: false,
       sortByTasksDoneFactor: 1,
-      sortByTasksNotDoneFactor: 1
+      sortByTasksNotDoneFactor: 1,
+      editMode: false
     };
   },
   computed: {
@@ -2182,7 +2292,6 @@ __webpack_require__.r(__webpack_exports__);
       this.sprintDetail = sprint;
     },
     onNewSprintCreated: function onNewSprintCreated(newSprint) {
-      newSprint.id = this.sprints.length + 1;
       this.sprints.unshift(newSprint);
       this.addNewSprint = false;
       this.sprintDetail = newSprint;
@@ -2194,6 +2303,16 @@ __webpack_require__.r(__webpack_exports__);
         return _this.choisenSprint.id !== sprint.id;
       });
       this.sprintDetail = null;
+    },
+    onSprintEditing: function onSprintEditing() {
+      this.editMode = true;
+    },
+    onSprintEdited: function onSprintEdited(editedSprint) {
+      this.editMode = false;
+      this.sprints = this.sprints.map(function (sprint) {
+        return editedSprint.id === sprint.id ? editedSprint : sprint;
+      });
+      this.sprintDetail = editedSprint;
     },
     sortByTasksDone: function sortByTasksDone() {
       var _this2 = this;
@@ -2255,6 +2374,25 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2273,18 +2411,39 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['mode', 'model'],
   data: function data() {
     return {
       newTask: {
         title: "",
-        description: "",
-        isDone: false
+        description: ""
       }
     };
   },
   methods: {
     createNewTask: function createNewTask() {
-      this.$emit('newTaskCreated', this.newTask);
+      var _this = this;
+
+      axios.post('/api/sprints/' + this.$route.params.sprint_id + '/tasks', this.newTask).then(function (_ref) {
+        var data = _ref.data;
+        _this.newTask.id = data.id;
+
+        _this.$emit('newTaskCreated', _this.newTask);
+      });
+    },
+    editTask: function editTask() {
+      var _this2 = this;
+
+      axios.put('/api/tasks/' + this.newTask.id, this.newTask).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this2.$emit('taskEdited', _this2.newTask);
+      });
+    }
+  },
+  mounted: function mounted() {
+    if (this.mode === 'edit') {
+      this.newTask = _objectSpread({}, this.model);
     }
   }
 });
@@ -2319,17 +2478,53 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['data'],
   methods: {
     taskDone: function taskDone() {
-      this.$emit('taskDone');
+      var _this = this;
+
+      axios.put('/api/tasks/' + this.data.id, {
+        title: this.data.title,
+        description: this.data.title,
+        is_done: true
+      }).then(function (_ref) {
+        var data = _ref.data;
+
+        _this.$emit('taskDone');
+      });
     },
     unDoneTask: function unDoneTask() {
-      this.$emit('taskUnDone');
+      var _this2 = this;
+
+      axios.put('/api/tasks/' + this.data.id, {
+        title: this.data.title,
+        description: this.data.title,
+        is_done: false
+      }).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this2.$emit('taskUnDone');
+      });
     },
     deleteTask: function deleteTask() {
-      this.$emit('taskDeleted');
+      var _this3 = this;
+
+      axios["delete"]('/api/tasks/' + this.data.id).then(function (_ref3) {
+        var data = _ref3.data;
+
+        _this3.$emit('taskDeleted');
+      });
+    },
+    editTask: function editTask() {
+      this.$emit('taskEditing');
     }
   }
 });
@@ -2401,6 +2596,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2409,7 +2618,8 @@ __webpack_require__.r(__webpack_exports__);
       tasks: [],
       tasksData: [],
       taskDetail: null,
-      addNewTask: false
+      addNewTask: false,
+      editMode: false
     };
   },
   computed: {
@@ -2427,14 +2637,13 @@ __webpack_require__.r(__webpack_exports__);
       this.addNewTask = false;
       this.taskDetail = task;
     },
-    onTaskIsDone: function onTaskIsDone() {
-      this.choisenTask.isDone = true;
+    onTaskis_done: function onTaskis_done() {
+      this.choisenTask.is_done = true;
     },
     onTaskIsUnDone: function onTaskIsUnDone() {
-      this.choisenTask.isDone = false;
+      this.choisenTask.is_done = false;
     },
     onNewTaskCreated: function onNewTaskCreated(newTask) {
-      newTask.id = this.tasks.length + 1;
       this.tasks.unshift(newTask);
       this.addNewTask = false;
       this.taskDetail = newTask;
@@ -2445,20 +2654,39 @@ __webpack_require__.r(__webpack_exports__);
       this.tasks = this.tasks.filter(function (task) {
         return _this.choisenTask.id !== task.id;
       });
+      this.tasksData = this.tasksData.filter(function (task) {
+        return _this.choisenTask.id !== task.id;
+      });
       this.taskDetail = null;
+    },
+    onTaskEditing: function onTaskEditing() {
+      this.editMode = true;
+    },
+    onTaskEdited: function onTaskEdited(editedTask) {
+      this.editMode = false;
+      this.tasks = this.tasks.map(function (task) {
+        return editedTask.id === task.id ? editedTask : task;
+      });
+      this.tasksData = this.tasksData.map(function (task) {
+        return editedTask.id === task.id ? editedTask : task;
+      });
+      this.taskDetail = editedTask;
     },
     giveAll: function giveAll() {
       this.tasks = this.tasksData;
+      this.taskDetail = null;
     },
     filterByDone: function filterByDone() {
       this.tasks = this.tasksData.filter(function (task) {
-        return task.isDone;
+        return task.is_done;
       });
+      this.taskDetail = null;
     },
     filterByNotDone: function filterByNotDone() {
       this.tasks = this.tasksData.filter(function (task) {
-        return !task.isDone;
+        return !task.is_done;
       });
+      this.taskDetail = null;
     }
   },
   created: function created() {
@@ -20903,7 +21131,7 @@ var render = function() {
     [
       _c("app-header"),
       _vm._v(" "),
-      _c("div", { staticClass: "container mb-4" }, [_c("router-view")], 1)
+      _c("div", { staticClass: "container my-5" }, [_c("router-view")], 1)
     ],
     1
   )
@@ -20934,7 +21162,7 @@ var render = function() {
     "div",
     {
       staticClass:
-        "align-items-center bg-secondary d-flex justify-content-between p-3 text-white"
+        "align-items-center bg-secondary d-flex justify-content-between p-3 text-white shadow"
     },
     [
       _c(
@@ -20960,7 +21188,7 @@ var render = function() {
             "router-link",
             {
               staticClass: "mx-3 nav-link-item",
-              attrs: { tag: "div", to: "/add-project" }
+              attrs: { tag: "div", to: "/projects/create" }
             },
             [_vm._v("\n            Add New Project\n        ")]
           )
@@ -20995,101 +21223,131 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
     _c("div", { staticClass: "col" }, [
-      _vm._m(0),
+      _c("div", { staticClass: "text-center mb-5" }, [
+        _vm.mode === "create"
+          ? _c("h4", [_vm._v("Create New Project")])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.mode === "edit" ? _c("h4", [_vm._v("Edit Project")]) : _vm._e()
+      ]),
       _vm._v(" "),
-      _c("form", [
-        _c("div", { staticClass: "form-group" }, [
-          _c("label", { attrs: { for: "titleInput" } }, [_vm._v("Title")]),
-          _vm._v(" "),
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.newProject.title,
-                expression: "newProject.title"
-              }
-            ],
-            staticClass: "form-control",
-            attrs: {
-              type: "text",
-              id: "titleInput",
-              placeholder: "Enter a title"
-            },
-            domProps: { value: _vm.newProject.title },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.newProject, "title", $event.target.value)
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group" }, [
-          _c("label", { attrs: { for: "descriptionInput" } }, [
-            _vm._v("Description")
-          ]),
-          _vm._v(" "),
-          _c("textarea", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.newProject.description,
-                expression: "newProject.description"
-              }
-            ],
-            staticClass: "form-control",
-            attrs: {
-              id: "descriptionInput",
-              rows: "3",
-              placeholder: "Enter a description"
-            },
-            domProps: { value: _vm.newProject.description },
-            on: {
-              input: function($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.newProject, "description", $event.target.value)
-              }
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "d-flex justify-content-end" }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-success",
-              attrs: { type: "submit" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.createNewProject($event)
-                }
-              }
-            },
-            [_vm._v("Create New Sprint")]
-          )
+      _c("div", { staticClass: "card shadow" }, [
+        _c("div", { staticClass: "card-body" }, [
+          _c("div", { staticClass: "card-text" }, [
+            _c("form", [
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "titleInput" } }, [
+                  _vm._v("Title")
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.newProject.title,
+                      expression: "newProject.title"
+                    }
+                  ],
+                  staticClass: "form-control shadow-sm",
+                  attrs: {
+                    type: "text",
+                    id: "titleInput",
+                    placeholder: "Enter a title"
+                  },
+                  domProps: { value: _vm.newProject.title },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.newProject, "title", $event.target.value)
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "form-group" }, [
+                _c("label", { attrs: { for: "descriptionInput" } }, [
+                  _vm._v("Description")
+                ]),
+                _vm._v(" "),
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.newProject.description,
+                      expression: "newProject.description"
+                    }
+                  ],
+                  staticClass: "form-control shadow-sm",
+                  attrs: {
+                    id: "descriptionInput",
+                    rows: "3",
+                    placeholder: "Enter a description"
+                  },
+                  domProps: { value: _vm.newProject.description },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(
+                        _vm.newProject,
+                        "description",
+                        $event.target.value
+                      )
+                    }
+                  }
+                })
+              ]),
+              _vm._v(" "),
+              _vm.mode === "create"
+                ? _c("div", { staticClass: "d-flex justify-content-end" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-success shadow",
+                        attrs: { type: "submit" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.createNewProject($event)
+                          }
+                        }
+                      },
+                      [_vm._v("Add New Project")]
+                    )
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.mode === "edit"
+                ? _c("div", { staticClass: "d-flex justify-content-end" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-success shadow",
+                        attrs: { type: "submit" },
+                        on: {
+                          click: function($event) {
+                            $event.preventDefault()
+                            return _vm.editProject($event)
+                          }
+                        }
+                      },
+                      [_vm._v("Edit Project")]
+                    )
+                  ])
+                : _vm._e()
+            ])
+          ])
         ])
       ])
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
-      _c("h4", [_vm._v("Create a New Project")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -21111,26 +21369,32 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card my-4" }, [
+  return _c("div", { staticClass: "card shadow" }, [
+    _c("div", { staticClass: "card-header" }, [
+      _c(
+        "h5",
+        { staticClass: "card-title d-flex justify-content-between m-0" },
+        [
+          _c("span", [_vm._v(_vm._s(_vm.data.title))]),
+          _vm._v(" "),
+          _c("span", { staticClass: "badge badge-danger" })
+        ]
+      )
+    ]),
+    _vm._v(" "),
     _c("div", { staticClass: "card-body" }, [
-      _c("h5", { staticClass: "card-title d-flex justify-content-between" }, [
-        _c("span", [_vm._v(_vm._s(_vm.data.title))]),
-        _vm._v(" "),
-        _c("span", { staticClass: "badge badge-danger" })
-      ]),
-      _vm._v(" "),
-      _c("p", { staticClass: "card-text my-4" }, [
+      _c("p", { staticClass: "card-text mx-4 my-2" }, [
         _vm._v("\n            " + _vm._s(_vm.data.description) + "\n        ")
       ]),
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "d-flex justify-content-end" },
+        { staticClass: "d-flex justify-content-between mt-3" },
         [
           _c(
             "router-link",
             {
-              staticClass: "btn btn-secondary",
+              staticClass: "btn btn-link",
               attrs: {
                 tag: "button",
                 to: "/projects/" + _vm.data.id + "/sprints"
@@ -21140,12 +21404,31 @@ var render = function() {
           ),
           _vm._v(" "),
           _c(
-            "button",
-            {
-              staticClass: "btn btn-danger ml-2",
-              on: { click: _vm.deleteProject }
-            },
-            [_vm._v("Delete")]
+            "div",
+            [
+              _c(
+                "router-link",
+                {
+                  staticClass: "btn btn-primary shadow",
+                  attrs: {
+                    tag: "button",
+                    to: "/projects/" + _vm.data.id + "/edit"
+                  },
+                  on: { click: _vm.deleteProject }
+                },
+                [_vm._v("Edit")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger ml-2 shadow",
+                  on: { click: _vm.deleteProject }
+                },
+                [_vm._v("Delete")]
+              )
+            ],
+            1
           )
         ],
         1
@@ -21175,58 +21458,50 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm._m(0),
-    _vm._v(" "),
-    _vm.projects.length
-      ? _c(
+  return _c(
+    "div",
+    { staticClass: "row" },
+    [
+      _vm._m(0),
+      _vm._v(" "),
+      _vm._l(_vm.projects, function(project) {
+        return _c(
           "div",
-          { staticClass: "row" },
-          _vm._l(_vm.projects, function(project) {
-            return _c(
-              "div",
-              { key: project.id, staticClass: "col-md-6" },
-              [
-                _c("project-details", {
-                  attrs: { data: project },
-                  on: {
-                    projectDeleted: function($event) {
-                      return _vm.onProjectDeleted(project)
-                    }
-                  }
-                })
-              ],
-              1
-            )
-          }),
-          0
+          { key: project.id, staticClass: "col-md-12 mb-4" },
+          [
+            _c("project-details", {
+              attrs: { data: project },
+              on: {
+                projectDeleted: function($event) {
+                  return _vm.onProjectDeleted(project)
+                }
+              }
+            })
+          ],
+          1
         )
-      : _vm._e(),
-    _vm._v(" "),
-    !_vm.projects.length
-      ? _c("div", { staticClass: "row" }, [_vm._m(1)])
-      : _vm._e()
-  ])
+      }),
+      _vm._v(" "),
+      !_vm.projects.length
+        ? _c("div", { staticClass: "col-md-12" }, [
+            _c(
+              "div",
+              { staticClass: "alert alert-info", attrs: { role: "alert" } },
+              [_vm._v("\n            You don't have any project !\n        ")]
+            )
+          ])
+        : _vm._e()
+    ],
+    2
+  )
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row my-4" }, [
-      _c("div", { staticClass: "col text-center mt-4" }, [
-        _c("h4", [_vm._v("Projects List")])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col" }, [
-      _c("div", { staticClass: "alert alert-info", attrs: { role: "alert" } }, [
-        _vm._v("\n                You don't have any project !\n            ")
-      ])
+    return _c("div", { staticClass: "col-md-12 text-center mb-5" }, [
+      _c("h4", [_vm._v("Projects List")])
     ])
   }
 ]
@@ -21252,84 +21527,119 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("form", [
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "titleInput" } }, [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.newSprint.title,
-              expression: "newSprint.title"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: {
-            type: "text",
-            id: "titleInput",
-            placeholder: "Enter a title"
-          },
-          domProps: { value: _vm.newSprint.title },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.newSprint, "title", $event.target.value)
-            }
-          }
-        })
-      ]),
+    _c("div", { staticClass: "text-center mb-5" }, [
+      _vm.mode === "create"
+        ? _c("h4", [_vm._v("Create New Sprint")])
+        : _vm._e(),
       _vm._v(" "),
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "descriptionInput" } }, [
-          _vm._v("Description")
-        ]),
-        _vm._v(" "),
-        _c("textarea", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.newSprint.description,
-              expression: "newSprint.description"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: {
-            id: "descriptionInput",
-            rows: "3",
-            placeholder: "Enter a description"
-          },
-          domProps: { value: _vm.newSprint.description },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.newSprint, "description", $event.target.value)
-            }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "d-flex justify-content-end" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-success",
-            attrs: { type: "submit" },
-            on: {
-              click: function($event) {
-                $event.preventDefault()
-                return _vm.createNewSprint($event)
-              }
-            }
-          },
-          [_vm._v("Create New Sprint")]
-        )
+      _vm.mode === "edit" ? _c("h4", [_vm._v("Edit Sprint")]) : _vm._e()
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card shadow" }, [
+      _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "card-text" }, [
+          _c("form", [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "titleInput" } }, [_vm._v("Title")]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.newSprint.title,
+                    expression: "newSprint.title"
+                  }
+                ],
+                staticClass: "form-control shadow-sm",
+                attrs: {
+                  type: "text",
+                  id: "titleInput",
+                  placeholder: "Enter a title"
+                },
+                domProps: { value: _vm.newSprint.title },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.newSprint, "title", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "descriptionInput" } }, [
+                _vm._v("Description")
+              ]),
+              _vm._v(" "),
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.newSprint.description,
+                    expression: "newSprint.description"
+                  }
+                ],
+                staticClass: "form-control shadow-sm",
+                attrs: {
+                  id: "descriptionInput",
+                  rows: "3",
+                  placeholder: "Enter a description"
+                },
+                domProps: { value: _vm.newSprint.description },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.newSprint, "description", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _vm.mode === "create"
+              ? _c("div", { staticClass: "d-flex justify-content-end" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success shadow",
+                      attrs: { type: "submit" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.createNewSprint($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Create New Sprint")]
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.mode === "edit"
+              ? _c("div", { staticClass: "d-flex justify-content-end" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success shadow",
+                      attrs: { type: "submit" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.editSprint($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Edit Sprint")]
+                  )
+                ])
+              : _vm._e()
+          ])
+        ])
       ])
     ])
   ])
@@ -21356,55 +21666,76 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card" }, [
-    _c("div", { staticClass: "card-body" }, [
-      _c("h5", { staticClass: "card-title d-flex justify-content-between" }, [
-        _c("span", [
-          _vm._v(
-            "\n                " + _vm._s(_vm.data.title) + "\n            "
-          )
-        ]),
-        _vm._v(" "),
-        _c("div", [
-          _c("span", { staticClass: "badge badge-success" }, [
-            _vm._v(_vm._s(_vm.data.tasksDone))
+  return _c("div", { staticClass: "card shadow" }, [
+    _c("div", { staticClass: "card-header" }, [
+      _c(
+        "h5",
+        { staticClass: "card-title d-flex justify-content-between m-0" },
+        [
+          _c("span", [
+            _vm._v(
+              "\n                " + _vm._s(_vm.data.title) + "\n            "
+            )
           ]),
           _vm._v(" "),
-          _c("span", { staticClass: "badge badge-danger" }, [
-            _vm._v(_vm._s(_vm.data.tasksNotDone))
+          _c("div", [
+            _c("span", { staticClass: "badge badge-success" }, [
+              _vm._v(_vm._s(_vm.data.tasksDone))
+            ]),
+            _vm._v(" "),
+            _c("span", { staticClass: "badge badge-danger" }, [
+              _vm._v(_vm._s(_vm.data.tasksNotDone))
+            ])
           ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-text my-4" }, [
+        ]
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body" }, [
+      _c("div", { staticClass: "card-text mx-4 my-2" }, [
         _vm._v("\n            " + _vm._s(_vm.data.description) + "\n        ")
       ]),
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "d-flex justify-content-end" },
+        { staticClass: "d-flex justify-content-between mt-3" },
         [
           _c(
             "router-link",
             {
-              staticClass: "btn btn-primary",
+              staticClass: "btn btn-link",
               attrs: { tag: "button", to: "/sprints/" + _vm.data.id + "/tasks" }
             },
             [_vm._v("Show Tasks")]
           ),
           _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-danger ml-2",
-              on: {
-                click: function($event) {
-                  return _vm.deleteSprint()
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary shadow",
+                on: {
+                  click: function($event) {
+                    return _vm.editSprint()
+                  }
                 }
-              }
-            },
-            [_vm._v("Delete")]
-          )
+              },
+              [_vm._v("Edit")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-danger ml-2 shadow",
+                on: {
+                  click: function($event) {
+                    return _vm.deleteSprint()
+                  }
+                }
+              },
+              [_vm._v("Delete")]
+            )
+          ])
         ],
         1
       )
@@ -21434,131 +21765,161 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col-md-4" }, [
-      _vm.sprints.length
-        ? _c("div", { staticClass: "mb-4" }, [
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "ul",
-              { staticClass: "list-group" },
-              _vm._l(_vm.sprints, function(sprint) {
-                return _c(
-                  "li",
+    _vm.sprints.length
+      ? _c("div", { staticClass: "col-md-4" }, [
+          _vm.sprints.length
+            ? _c("div", [
+                _vm._m(0),
+                _vm._v(" "),
+                _c(
+                  "ul",
+                  { staticClass: "list-group shadow" },
+                  _vm._l(_vm.sprints, function(sprint) {
+                    return _c(
+                      "li",
+                      {
+                        key: sprint.id,
+                        staticClass:
+                          "list-group-item sprint-element d-flex justify-content-between",
+                        on: {
+                          click: function($event) {
+                            return _vm.choiseASprint(sprint)
+                          }
+                        }
+                      },
+                      [
+                        _c("span", [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(_vm._f("truncate")(sprint.title)) +
+                              "\n                    "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("div", [
+                          _c("span", { staticClass: "badge badge-success" }, [
+                            _vm._v(_vm._s(sprint.tasksDone))
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "badge badge-danger" }, [
+                            _vm._v(_vm._s(sprint.tasksNotDone))
+                          ])
+                        ])
+                      ]
+                    )
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c("div", [
+                  _c("h5", { staticClass: "text-center my-4" }, [
+                    _vm._v("Sort By")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success btn-block shadow",
+                      on: { click: _vm.sortByTasksDone }
+                    },
+                    [_vm._v("Tasks Done")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger btn-block shadow",
+                      on: { click: _vm.sortByTasksNotDone }
+                    },
+                    [_vm._v("Tasks Not Done")]
+                  )
+                ])
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          !_vm.addNewSprint && _vm.sprints.length
+            ? _c("div", { staticClass: "mt-4" }, [
+                _c(
+                  "button",
                   {
-                    key: sprint.id,
-                    staticClass:
-                      "list-group-item sprint-element d-flex justify-content-between",
+                    staticClass: "btn btn-secondary btn-block shadow",
                     on: {
                       click: function($event) {
-                        return _vm.choiseASprint(sprint)
+                        _vm.addNewSprint = true
                       }
                     }
                   },
-                  [
-                    _c("span", [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(sprint.title) +
-                          "\n                    "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _c("div", [
-                      _c("span", { staticClass: "badge badge-success" }, [
-                        _vm._v(_vm._s(sprint.tasksDone))
-                      ]),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "badge badge-danger" }, [
-                        _vm._v(_vm._s(sprint.tasksNotDone))
-                      ])
-                    ])
-                  ]
+                  [_vm._v("Create New Task")]
                 )
-              }),
-              0
-            ),
-            _vm._v(" "),
-            _c("div", { staticClass: "my-4" }, [
-              _c("h5", { staticClass: "text-center my-3" }, [
-                _vm._v("Sort By")
-              ]),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-success btn-block",
-                  on: { click: _vm.sortByTasksDone }
-                },
-                [_vm._v("Tasks Done")]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger btn-block",
-                  on: { click: _vm.sortByTasksNotDone }
-                },
-                [_vm._v("Tasks Not Done")]
-              )
-            ])
-          ])
-        : _vm._e(),
-      _vm._v(" "),
-      !_vm.addNewSprint && _vm.sprints.length
-        ? _c("div", [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-secondary btn-block",
-                on: {
-                  click: function($event) {
-                    _vm.addNewSprint = true
-                  }
-                }
-              },
-              [_vm._v("Create New Task")]
-            )
-          ])
-        : _vm._e()
-    ]),
+              ])
+            : _vm._e()
+        ])
+      : _vm._e(),
     _vm._v(" "),
-    _c("div", { staticClass: "col-md-8" }, [
-      !_vm.addNewSprint && _vm.sprints.length
-        ? _c(
-            "div",
-            [
-              _vm._m(1),
-              _vm._v(" "),
-              _vm.choisenSprint
-                ? _c("sprint-details", {
-                    attrs: { data: _vm.choisenSprint },
-                    on: {
-                      sprintDeleted: function($event) {
-                        return _vm.onSprintDeleted()
+    _c(
+      "div",
+      {
+        class: {
+          "col-md-8": _vm.sprints.length,
+          col: _vm.sprints.length === 0
+        }
+      },
+      [
+        !_vm.addNewSprint && _vm.sprints.length && !_vm.editMode
+          ? _c(
+              "div",
+              [
+                _vm._m(1),
+                _vm._v(" "),
+                _vm.choisenSprint
+                  ? _c("sprint-details", {
+                      attrs: { data: _vm.choisenSprint },
+                      on: {
+                        sprintDeleted: function($event) {
+                          return _vm.onSprintDeleted()
+                        },
+                        sprintEditing: function($event) {
+                          return _vm.onSprintEditing()
+                        }
                       }
+                    })
+                  : _vm._e()
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.addNewSprint || _vm.sprints.length === 0
+          ? _c(
+              "div",
+              [
+                _c("sprint-add", {
+                  attrs: { mode: "create" },
+                  on: { newSprintCreated: _vm.onNewSprintCreated }
+                })
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.editMode
+          ? _c(
+              "div",
+              [
+                _c("sprint-add", {
+                  attrs: { mode: "edit", model: _vm.choisenSprint },
+                  on: {
+                    sprintEdited: function($event) {
+                      return _vm.onSprintEdited($event)
                     }
-                  })
-                : _vm._e()
-            ],
-            1
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.addNewSprint || _vm.sprints.length === 0
-        ? _c(
-            "div",
-            [
-              _vm._m(2),
-              _vm._v(" "),
-              _c("sprint-add", {
-                on: { newSprintCreated: _vm.onNewSprintCreated }
-              })
-            ],
-            1
-          )
-        : _vm._e()
-    ])
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e()
+      ]
+    )
   ])
 }
 var staticRenderFns = [
@@ -21566,7 +21927,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
+    return _c("div", { staticClass: "text-center mb-5" }, [
       _c("h4", [_vm._v("Sprints List")])
     ])
   },
@@ -21574,16 +21935,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
+    return _c("div", { staticClass: "text-center mb-5" }, [
       _c("h4", [_vm._v("Sprint Detail")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
-      _c("h4", [_vm._v("Create New Sprint")])
     ])
   }
 ]
@@ -21609,84 +21962,117 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("form", [
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "titleInput" } }, [_vm._v("Title")]),
-        _vm._v(" "),
-        _c("input", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.newTask.title,
-              expression: "newTask.title"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: {
-            type: "text",
-            id: "titleInput",
-            placeholder: "Enter a title"
-          },
-          domProps: { value: _vm.newTask.title },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.newTask, "title", $event.target.value)
-            }
-          }
-        })
-      ]),
+    _c("div", { staticClass: "text-center mb-5" }, [
+      _vm.mode === "create" ? _c("h4", [_vm._v("Create New Task")]) : _vm._e(),
       _vm._v(" "),
-      _c("div", { staticClass: "form-group" }, [
-        _c("label", { attrs: { for: "descriptionInput" } }, [
-          _vm._v("Description")
-        ]),
-        _vm._v(" "),
-        _c("textarea", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.newTask.description,
-              expression: "newTask.description"
-            }
-          ],
-          staticClass: "form-control",
-          attrs: {
-            id: "descriptionInput",
-            rows: "3",
-            placeholder: "Enter a description"
-          },
-          domProps: { value: _vm.newTask.description },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.$set(_vm.newTask, "description", $event.target.value)
-            }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "d-flex justify-content-end" }, [
-        _c(
-          "button",
-          {
-            staticClass: "btn btn-success",
-            attrs: { type: "submit" },
-            on: {
-              click: function($event) {
-                $event.preventDefault()
-                return _vm.createNewTask($event)
-              }
-            }
-          },
-          [_vm._v("Create New Task")]
-        )
+      _vm.mode === "edit" ? _c("h4", [_vm._v("Edit Task")]) : _vm._e()
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card shadow" }, [
+      _c("div", { staticClass: "card-body" }, [
+        _c("div", { staticClass: "card-text" }, [
+          _c("form", [
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "titleInput" } }, [_vm._v("Title")]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.newTask.title,
+                    expression: "newTask.title"
+                  }
+                ],
+                staticClass: "form-control shadow-sm",
+                attrs: {
+                  type: "text",
+                  id: "titleInput",
+                  placeholder: "Enter a title"
+                },
+                domProps: { value: _vm.newTask.title },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.newTask, "title", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c("label", { attrs: { for: "descriptionInput" } }, [
+                _vm._v("Description")
+              ]),
+              _vm._v(" "),
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.newTask.description,
+                    expression: "newTask.description"
+                  }
+                ],
+                staticClass: "form-control shadow-sm",
+                attrs: {
+                  id: "descriptionInput",
+                  rows: "3",
+                  placeholder: "Enter a description"
+                },
+                domProps: { value: _vm.newTask.description },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.newTask, "description", $event.target.value)
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _vm.mode === "create"
+              ? _c("div", { staticClass: "d-flex justify-content-end" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success shadow",
+                      attrs: { type: "submit" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.createNewTask($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Create New Task")]
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.mode === "edit"
+              ? _c("div", { staticClass: "d-flex justify-content-end" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-success shadow",
+                      attrs: { type: "submit" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.editTask($event)
+                        }
+                      }
+                    },
+                    [_vm._v("Edit Task")]
+                  )
+                ])
+              : _vm._e()
+          ])
+        ])
       ])
     ])
   ])
@@ -21716,57 +22102,78 @@ var render = function() {
   return _c(
     "div",
     {
-      staticClass: "card text-white",
+      staticClass: "card text-white shadow",
       class: {
-        "light-bg-success": _vm.data.isDone,
-        "light-bg-danger": !_vm.data.isDone
+        "light-bg-success": _vm.data.is_done,
+        "light-bg-danger": !_vm.data.is_done
       }
     },
     [
-      _c("div", { staticClass: "card-body" }, [
+      _c("div", { staticClass: "card-header" }, [
         _c(
           "h5",
           {
-            staticClass: "card-title",
-            class: { "task-done": _vm.data.isDone }
+            staticClass: "card-title m-0",
+            class: { "task-done": _vm.data.is_done }
           },
           [_vm._v(_vm._s(_vm.data.title))]
-        ),
-        _vm._v(" "),
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-body" }, [
         _c(
           "p",
           {
-            staticClass: "card-text my-4",
-            class: { "task-done": _vm.data.isDone }
+            staticClass: "card-text mx-4 my-2",
+            class: { "task-done": _vm.data.is_done }
           },
           [_vm._v(_vm._s(_vm.data.description))]
         ),
         _vm._v(" "),
-        _c("div", { staticClass: "d-flex justify-content-end" }, [
-          !_vm.data.isDone
-            ? _c(
-                "button",
-                { staticClass: "btn btn-success", on: { click: _vm.taskDone } },
-                [_vm._v("Done")]
-              )
-            : _vm._e(),
+        _c("div", { staticClass: "d-flex justify-content-between mt-3" }, [
+          _c("div", [
+            !_vm.data.is_done
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success shadow",
+                    on: { click: _vm.taskDone }
+                  },
+                  [_vm._v("Done")]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.data.is_done
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger shadow",
+                    on: { click: _vm.unDoneTask }
+                  },
+                  [_vm._v("Not Done Yet")]
+                )
+              : _vm._e()
+          ]),
           _vm._v(" "),
-          _vm.data.isDone
-            ? _c(
-                "button",
-                { staticClass: "btn btn-light", on: { click: _vm.unDoneTask } },
-                [_vm._v("Not Done Yet")]
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-danger ml-2",
-              on: { click: _vm.deleteTask }
-            },
-            [_vm._v("Delete")]
-          )
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary shadow",
+                on: { click: _vm.editTask }
+              },
+              [_vm._v("Edit")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-danger ml-2 shadow",
+                on: { click: _vm.deleteTask }
+              },
+              [_vm._v("Delete")]
+            )
+          ])
         ])
       ])
     ]
@@ -21795,147 +22202,192 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col-md-4" }, [
-      _vm._m(0),
-      _vm._v(" "),
-      _c(
-        "ul",
-        { staticClass: "list-group" },
-        _vm._l(_vm.tasks, function(task) {
-          return _c(
-            "li",
-            {
-              key: task.id,
-              staticClass:
-                "list-group-item task-element text-white font-italic h5",
-              class: {
-                "task-done light-bg-success": task.isDone,
-                "light-bg-danger": !task.isDone
-              },
-              on: {
-                click: function($event) {
-                  return _vm.choiseATask(task)
-                }
-              }
-            },
-            [
-              task.isDone
-                ? _c("i", { staticClass: "fa fa-check-circle mr-2" })
-                : _vm._e(),
-              _vm._v(" "),
-              !task.isDone
-                ? _c("i", { staticClass: "fa fa-exclamation-triangle mr-2" })
-                : _vm._e(),
-              _vm._v(
-                "\n            " +
-                  _vm._s(_vm._f("truncate")(task.title)) +
-                  "\n            "
-              )
-            ]
-          )
-        }),
-        0
-      ),
-      _vm._v(" "),
-      _vm.tasks.length
-        ? _c("div", { staticClass: "mb-4" }, [
-            _c("h5", { staticClass: "text-center my-3" }, [
-              _vm._v("Filter By")
-            ]),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-success btn-block",
-                on: { click: _vm.filterByDone }
-              },
-              [_vm._v("Done")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-danger btn-block",
-                on: { click: _vm.filterByNotDone }
-              },
-              [_vm._v("Not Done")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-primary btn-block",
-                on: { click: _vm.giveAll }
-              },
-              [_vm._v("All")]
-            )
-          ])
-        : _vm._e(),
-      _vm._v(" "),
-      !_vm.addNewTask && _vm.tasks.length
-        ? _c("div", [
-            _c(
-              "button",
-              {
-                staticClass: "btn btn-secondary btn-block",
-                on: {
-                  click: function($event) {
-                    _vm.addNewTask = !_vm.addNewTask
+    _vm.tasksData.length
+      ? _c("div", { staticClass: "col-md-4" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c(
+            "ul",
+            { staticClass: "list-group shadow" },
+            _vm._l(_vm.tasks, function(task) {
+              return _c(
+                "li",
+                {
+                  key: task.id,
+                  staticClass:
+                    "list-group-item task-element text-white font-italic h5",
+                  class: {
+                    "task-done light-bg-success": task.is_done,
+                    "light-bg-danger": !task.is_done
+                  },
+                  on: {
+                    click: function($event) {
+                      return _vm.choiseATask(task)
+                    }
                   }
-                }
-              },
-              [_vm._v("Create New Task")]
-            )
-          ])
-        : _vm._e()
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-md-8" }, [
-      !_vm.addNewTask && _vm.tasks.length
-        ? _c(
-            "div",
-            [
-              _vm._m(1),
-              _vm._v(" "),
-              _vm.choisenTask
-                ? _c("task-details", {
-                    attrs: { data: _vm.choisenTask },
+                },
+                [
+                  task.is_done
+                    ? _c("i", { staticClass: "fa fa-check-circle mr-2" })
+                    : _vm._e(),
+                  _vm._v(" "),
+                  !task.is_done
+                    ? _c("i", {
+                        staticClass: "fa fa-exclamation-triangle mr-2"
+                      })
+                    : _vm._e(),
+                  _vm._v(
+                    "\n            " +
+                      _vm._s(_vm._f("truncate")(task.title)) +
+                      "\n            "
+                  )
+                ]
+              )
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _vm.tasksData.length
+            ? _c("div", [
+                _c("h5", { staticClass: "text-center my-4" }, [
+                  _vm._v("Filter By")
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success btn-block shadow",
+                    on: { click: _vm.filterByDone }
+                  },
+                  [_vm._v("Done")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger btn-block shadow",
+                    on: { click: _vm.filterByNotDone }
+                  },
+                  [_vm._v("Not Done")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary btn-block shadow",
+                    on: { click: _vm.giveAll }
+                  },
+                  [_vm._v("All")]
+                )
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          !_vm.addNewTask && _vm.tasksData.length
+            ? _c("div", { staticClass: "mt-4" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary btn-block shadow",
                     on: {
-                      taskDone: function($event) {
-                        return _vm.onTaskIsDone()
-                      },
-                      taskUnDone: function($event) {
-                        return _vm.onTaskIsUnDone()
-                      },
-                      taskDeleted: function($event) {
-                        return _vm.onTaskDeleted()
+                      click: function($event) {
+                        _vm.addNewTask = !_vm.addNewTask
                       }
                     }
-                  })
-                : _vm._e()
-            ],
-            1
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.addNewTask || _vm.tasks.length === 0
-        ? _c(
-            "div",
-            [
-              _vm._m(2),
-              _vm._v(" "),
-              _c("task-add", {
-                on: {
-                  newTaskCreated: function($event) {
-                    return _vm.onNewTaskCreated($event)
+                  },
+                  [_vm._v("Create New Task")]
+                )
+              ])
+            : _vm._e()
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        class: {
+          "col-md-8": _vm.tasksData.length,
+          col: _vm.tasksData.length === 0
+        }
+      },
+      [
+        !_vm.addNewTask && _vm.tasksData.length && !_vm.editMode
+          ? _c(
+              "div",
+              [
+                _vm._m(1),
+                _vm._v(" "),
+                _vm.choisenTask
+                  ? _c("task-details", {
+                      attrs: { data: _vm.choisenTask },
+                      on: {
+                        taskDone: function($event) {
+                          return _vm.onTaskis_done()
+                        },
+                        taskUnDone: function($event) {
+                          return _vm.onTaskIsUnDone()
+                        },
+                        taskDeleted: function($event) {
+                          return _vm.onTaskDeleted()
+                        },
+                        taskEditing: _vm.onTaskEditing
+                      }
+                    })
+                  : _vm._e(),
+                _vm._v(" "),
+                !_vm.choisenTask
+                  ? _c(
+                      "div",
+                      {
+                        staticClass: "alert alert-info",
+                        attrs: { role: "alert" }
+                      },
+                      [
+                        _vm._v(
+                          "\n                No tasks found!\n            "
+                        )
+                      ]
+                    )
+                  : _vm._e()
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.addNewTask || _vm.tasksData.length === 0
+          ? _c(
+              "div",
+              [
+                _c("task-add", {
+                  attrs: { mode: "create" },
+                  on: {
+                    newTaskCreated: function($event) {
+                      return _vm.onNewTaskCreated($event)
+                    }
                   }
-                }
-              })
-            ],
-            1
-          )
-        : _vm._e()
-    ])
+                })
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.editMode
+          ? _c(
+              "div",
+              [
+                _c("task-add", {
+                  attrs: { mode: "edit", model: _vm.choisenTask },
+                  on: {
+                    taskEdited: function($event) {
+                      return _vm.onTaskEdited($event)
+                    }
+                  }
+                })
+              ],
+              1
+            )
+          : _vm._e()
+      ]
+    )
   ])
 }
 var staticRenderFns = [
@@ -21943,7 +22395,7 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
+    return _c("div", { staticClass: "text-center mb-5" }, [
       _c("h4", [_vm._v("Tasks List")])
     ])
   },
@@ -21951,16 +22403,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
+    return _c("div", { staticClass: "text-center mb-5" }, [
       _c("h4", [_vm._v("Task Detail")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "my-4 text-center" }, [
-      _c("h4", [_vm._v("Create New Task")])
     ])
   }
 ]
@@ -37889,23 +38333,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_projects_ProjectsList_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./components/projects/ProjectsList.vue */ "./resources/js/components/projects/ProjectsList.vue");
 /* harmony import */ var _components_projects_ProjectAdd_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/projects/ProjectAdd.vue */ "./resources/js/components/projects/ProjectAdd.vue");
 /* harmony import */ var _components_sprints_SprintsList_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/sprints/SprintsList.vue */ "./resources/js/components/sprints/SprintsList.vue");
-/* harmony import */ var _components_tasks_TasksList_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/tasks/TasksList.vue */ "./resources/js/components/tasks/TasksList.vue");
+/* harmony import */ var _components_sprints_SprintAdd_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/sprints/SprintAdd.vue */ "./resources/js/components/sprints/SprintAdd.vue");
+/* harmony import */ var _components_tasks_TasksList_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/tasks/TasksList.vue */ "./resources/js/components/tasks/TasksList.vue");
+
 
 
 
 
 var routes = [{
   path: '/',
+  name: 'projects_list',
   component: _components_projects_ProjectsList_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
 }, {
-  path: '/add-project',
+  path: '/projects',
+  component: _components_projects_ProjectsList_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+}, {
+  path: '/projects/create',
+  component: _components_projects_ProjectAdd_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+}, {
+  path: '/projects/:project_id/edit',
   component: _components_projects_ProjectAdd_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
 }, {
   path: '/projects/:project_id/sprints',
+  name: 'project_details',
   component: _components_sprints_SprintsList_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
 }, {
   path: '/sprints/:sprint_id/tasks',
-  component: _components_tasks_TasksList_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+  component: _components_tasks_TasksList_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+}, {
+  path: '/projects/:project_id/sprints/:sprint_id/edit',
+  component: _components_sprints_SprintAdd_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
 }];
 
 /***/ }),

@@ -1,16 +1,21 @@
 <template>
-    <div class="card my-4">
+    <div class="card shadow">
+        <div class="card-header">
+            <h5 class="card-title d-flex justify-content-between m-0">
+                <span>{{data.title}}</span> 
+                <span class="badge badge-danger"></span>
+            </h5>
+        </div>
         <div class="card-body">
-                <h5 class="card-title d-flex justify-content-between">
-                   <span>{{data.title}}</span> 
-                    <span class="badge badge-danger"></span>
-                </h5>
-            <p class="card-text my-4">
+            <p class="card-text mx-4 my-2">
                 {{data.description}}
             </p>
-            <div class="d-flex justify-content-end">
-                <router-link tag="button" :to="'/projects/'+data.id+'/sprints'" class="btn btn-secondary">Show Details</router-link>
-                <button class="btn btn-danger ml-2" @click="deleteProject">Delete</button>
+            <div class="d-flex justify-content-between mt-3">
+                <router-link tag="button" :to="'/projects/'+data.id+'/sprints'" class="btn btn-link">Show Details</router-link>
+                <div>
+                    <router-link tag="button" :to="'/projects/'+data.id+'/edit'" class="btn btn-primary shadow" @click="deleteProject">Edit</router-link>
+                    <button class="btn btn-danger ml-2 shadow" @click="deleteProject">Delete</button>
+                </div>
             </div>
         </div>
     </div>
@@ -22,7 +27,10 @@ export default {
     ],
     methods:{
         deleteProject(){
-            this.$emit('projectDeleted');
+            axios.delete('/api/projects/'+this.data.id)
+            .then(({data}) => {
+                this.$emit('projectDeleted');
+            })
         }
     }
 }

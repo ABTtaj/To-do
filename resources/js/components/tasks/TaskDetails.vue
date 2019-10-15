@@ -1,18 +1,25 @@
 <template>
     <div 
-        class="card text-white" 
+        class="card text-white shadow" 
         :class="{
-            'light-bg-success':data.isDone
-            ,'light-bg-danger':!data.isDone
+            'light-bg-success':data.is_done
+            ,'light-bg-danger':!data.is_done
         }" 
     >
+        <div class="card-header">
+            <h5 class="card-title m-0" :class="{'task-done':data.is_done}">{{data.title}}</h5>
+        </div>
         <div class="card-body">
-            <h5 class="card-title" :class="{'task-done':data.isDone}">{{data.title}}</h5>
-            <p class="card-text my-4" :class="{'task-done':data.isDone}">{{data.description}}</p>
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-success" @click="taskDone" v-if="!data.isDone">Done</button>
-                <button class="btn btn-light" @click="unDoneTask" v-if="data.isDone">Not Done Yet</button>
-                <button class="btn btn-danger ml-2" @click="deleteTask">Delete</button>
+            <p class="card-text mx-4 my-2" :class="{'task-done':data.is_done}">{{data.description}}</p>
+            <div class="d-flex justify-content-between mt-3">
+                <div>
+                    <button class="btn btn-success shadow" @click="taskDone" v-if="!data.is_done">Done</button>
+                    <button class="btn btn-danger shadow" @click="unDoneTask" v-if="data.is_done">Not Done Yet</button>
+                </div>
+                <div>
+                    <button class="btn btn-primary shadow" @click="editTask">Edit</button>
+                    <button class="btn btn-danger ml-2 shadow" @click="deleteTask">Delete</button>
+                </div>
             </div>
         </div>
     </div>
@@ -24,13 +31,33 @@ export default {
     ],
     methods:{
         taskDone(){
-            this.$emit('taskDone');
+            axios.put('/api/tasks/'+this.data.id,{
+                title:this.data.title,
+                description:this.data.title,
+                is_done:true
+            }).
+            then(({data})=>{
+                this.$emit('taskDone');
+            });
         },
         unDoneTask(){
-            this.$emit('taskUnDone');
+            axios.put('/api/tasks/'+this.data.id,{
+                title:this.data.title,
+                description:this.data.title,
+                is_done:false
+            }).
+            then(({data})=>{
+                this.$emit('taskUnDone');
+            });
         },
         deleteTask(){
-            this.$emit('taskDeleted');
+            axios.delete('/api/tasks/'+this.data.id)
+            .then(({data})=>{
+                this.$emit('taskDeleted');
+            })
+        },
+        editTask(){
+            this.$emit('taskEditing');
         }
     }
 }

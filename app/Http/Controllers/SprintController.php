@@ -37,9 +37,10 @@ class SprintController extends Controller
                 'description.required'=>'Enter a valid description'
             ]);
 
-            $project->sprints()->create($arguments);
+            $sprint=$project->sprints()->create($arguments);
 
             return [
+                'id'=> $sprint->id,
                 'message'=>'Sprint Created',
                 'status'=>true
             ];
