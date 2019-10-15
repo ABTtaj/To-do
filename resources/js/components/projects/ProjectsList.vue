@@ -27,56 +27,7 @@ export default {
     },
     data(){
         return {
-            projects :[
-                {
-                    id:1,
-                    title:"Project #1",
-                    description : "Description Project #1",
-                    tasksNotDone:15
-                },
-                {
-                    id:2,
-                    title:"Project #2",
-                    description : "Description Project #2",
-                    tasksNotDone:30
-                },
-                {
-                    id:3,
-                    title:"Project #3",
-                    description : "Description Project #3",
-                    tasksNotDone:2
-                },
-                {
-                    id:4,
-                    title:"Project #4",
-                    description : "Description Project #4",
-                    tasksNotDone:0
-                },
-                {
-                    id:5,
-                    title:"Project #5",
-                    description : "Description Project #5",
-                    tasksNotDone:15
-                },
-                {
-                    id:6,
-                    title:"Project #6",
-                    description : "Description Project #6",
-                    tasksNotDone:30
-                },
-                {
-                    id:7,
-                    title:"Project #7",
-                    description : "Description Project #7",
-                    tasksNotDone:2
-                },
-                {
-                    id:8,
-                    title:"Project #8",
-                    description : "Description Project #8",
-                    tasksNotDone:0
-                },
-            ]
+            projects :[]
         }
     },
     methods:{
@@ -85,6 +36,11 @@ export default {
                 return deletedProject.id !== project.id;
             })
         }
+    },
+    mounted(){
+        axios.get('/api/projects').then(({data})=>{
+            this.projects=data;
+        });
     }
 }
 </script>

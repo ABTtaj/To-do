@@ -58,36 +58,7 @@ export default {
     },
     data(){
         return {
-            sprints:[
-                {
-                    id:1,
-                    title:"Sprint #1",
-                    description:"Sprint #1 Description",
-                    tasksDone:10,
-                    tasksNotDone:15
-                },
-                {
-                    id:2,
-                    title:"Sprint #2",
-                    description:"Sprint #2 Description",
-                    tasksDone:15,
-                    tasksNotDone:3
-                },
-                {
-                    id:3,
-                    title:"Sprint #3",
-                    description:"Sprint #3 Description",
-                    tasksDone:7,
-                    tasksNotDone:13
-                },
-                {
-                    id:4,
-                    title:"Sprint #4",
-                    description:"Sprint #4 Description",
-                    tasksDone:4,
-                    tasksNotDone:2
-                }
-            ],
+            sprints:[],
             sprintDetail:null,
             addNewSprint:false,
             sortByTasksDoneFactor:1,
@@ -147,6 +118,12 @@ export default {
             this.sortByTasksNotDoneFactor = -1 * this.sortByTasksNotDoneFactor;
             this.sortByTasksDoneFactor = 1;
         }
+    },
+    mounted(){
+        axios.get('/api/projects/'+this.$route.params.project_id+'/sprints')
+        .then(({data})=>{
+            this.sprints=data;
+        })
     }
 }
 </script>

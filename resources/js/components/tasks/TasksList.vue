@@ -59,38 +59,7 @@ export default {
     data(){
         return {
             tasks:[],
-            tasksData:[
-                {
-                    id:1,
-                    title:'Lorem ispsqf ',
-                    description:'Task Description 1',
-                    isDone:false
-                },
-                {
-                    id:2,
-                    title:'Task Test 2',
-                    description:'Task Description 2',
-                    isDone:true
-                },
-                {
-                    id:3,
-                    title:'Task Test 3',
-                    description:'Task Description 3',
-                    isDone:false
-                },
-                {
-                    id:4,
-                    title:'Task Test 4',
-                    description:'Task Description 4',
-                    isDone:true
-                },
-                {
-                    id:5,
-                    title:'Task Test 5',
-                    description:'Task Description 5',
-                    isDone:false
-                },
-            ],
+            tasksData:[],
             taskDetail:null,
             addNewTask:false
         }
@@ -143,7 +112,11 @@ export default {
         }
     },
     created(){
-        this.tasks=this.tasksData;
+        axios.get('/api/sprints/'+this.$route.params.sprint_id+'/tasks')
+        .then(({data})=>{
+            this.tasks = data;
+            this.tasksData = data;
+        })
     }
 }
 </script>

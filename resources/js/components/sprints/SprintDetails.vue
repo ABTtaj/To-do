@@ -16,7 +16,7 @@
                 {{data.description}}
             </div>
             <div class="d-flex justify-content-end">
-                <button class="btn btn-primary">Show Tasks</button>
+                <router-link tag="button" :to="'/sprints/'+data.id+'/tasks'" class="btn btn-primary">Show Tasks</router-link>
                 <button class="btn btn-danger ml-2" @click="deleteSprint()">Delete</button>
             </div>
         </div>
