@@ -1,8 +1,8 @@
 <template>
     <div class="row">
         <div class="col">
-            <div class="my-4">
-                <h4>Create A New Project</h4>
+            <div class="my-4 text-center">
+                <h4>Create a New Project</h4>
             </div>
             <form>
                 <div class="form-group">

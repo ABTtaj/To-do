@@ -1,13 +1,13 @@
 <template>
     <div class="align-items-center bg-secondary d-flex justify-content-between p-3 text-white">
-        <div class="nav-title-item h2 m-0">To Do</div>
+        <router-link tag="div" to="/" class="nav-title-item h2 m-0">To Do</router-link>
         <div class="d-flex">
-            <div class="nav-link-item">
+            <router-link tag="div" to="/" class="nav-link-item">
                 Projects
-            </div>
-            <div class="mx-3 nav-link-item">
+            </router-link>
+            <router-link tag="div" to="/add-project" class="mx-3 nav-link-item">
                 Add New Project
-            </div>
+            </router-link>
         </div>
     </div>
 </template>
