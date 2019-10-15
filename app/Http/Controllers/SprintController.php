@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Project;
 use App\Sprint;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class SprintController extends Controller
 {
@@ -12,19 +14,9 @@ class SprintController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Project $project)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $project->sprints;
     }
 
     /**
@@ -33,9 +25,30 @@ class SprintController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,Project $project)
     {
-        //
+        try{
+            $arguments = request()->validate([
+                'title'=>'required',
+                'description'=>'required'
+            ],
+            [
+                'title.required'=>'Enter a valid title',
+                'description.required'=>'Enter a valid description'
+            ]);
+
+            $project->sprints()->create($arguments);
+
+            return [
+                'message'=>'Sprint Created',
+                'status'=>true
+            ];
+        } catch (ValidationException $e){
+            return [
+                'message'=>$e->validator->customMessages,
+                'status'=>false
+            ];
+        }
     }
 
     /**
@@ -46,18 +59,7 @@ class SprintController extends Controller
      */
     public function show(Sprint $sprint)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Sprint  $sprint
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Sprint $sprint)
-    {
-        //
+        return $sprint;
     }
 
     /**
@@ -69,7 +71,29 @@ class SprintController extends Controller
      */
     public function update(Request $request, Sprint $sprint)
     {
-        //
+        try{
+            $arguments = request()->validate([
+                'title'=>'required',
+                'description'=>'required'
+            ],
+            [
+                'title.required'=>'Enter a valid title',
+                'description.required'=>'Enter a valid description'
+            ]);
+
+            $sprint->update($arguments);
+
+            return [
+                'message'=>'Sprint Updated',
+                'status'=>true
+            ];
+
+        } catch (ValidationException $e){
+            return [
+                'message'=>$e->validator->customMessages,
+                'status'=>false
+            ];
+        }
     }
 
     /**
@@ -80,6 +104,10 @@ class SprintController extends Controller
      */
     public function destroy(Sprint $sprint)
     {
-        //
+        $sprint->delete();
+        return [
+            'message'=>'Sprint Deleted',
+            'status'=>true
+        ];
     }
 }

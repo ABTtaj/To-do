@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Sprint;
 use App\Task;
 use Illuminate\Http\Request;
 
@@ -12,19 +13,9 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Sprint $sprint)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $sprint->tasks;
     }
 
     /**
@@ -33,9 +24,30 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,Sprint $sprint)
     {
-        //
+        try{
+            $arguments = request()->validate([
+                'title'=>'required',
+                'description'=>'required'
+            ],
+            [
+                'title.required'=>'Enter a valid title',
+                'description.required'=>'Enter a valid description'
+            ]);
+
+            $sprint->tasks()->create($arguments);
+
+            return [
+                'message'=>'Task Created',
+                'status'=>true
+            ];
+        } catch (ValidationException $e){
+            return [
+                'message'=>$e->validator->customMessages,
+                'status'=>false
+            ];
+        }
     }
 
     /**
@@ -46,18 +58,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
-    {
-        //
+        return $task;
     }
 
     /**
@@ -69,7 +70,28 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        try{
+            $arguments = request()->validate([
+                'title'=>'required',
+                'description'=>'required'
+            ],
+            [
+                'title.required'=>'Enter a valid title',
+                'description.required'=>'Enter a valid description'
+            ]);
+
+            $task->update($arguments);
+
+            return [
+                'message'=>'Task Updated',
+                'status'=>true
+            ];
+        } catch (ValidationException $e){
+            return [
+                'message'=>$e->validator->customMessages,
+                'status'=>false
+            ];
+        }
     }
 
     /**
@@ -80,6 +102,11 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        return [
+            'message'=>'Task Deleted',
+            'status'=>true
+        ];
     }
 }
