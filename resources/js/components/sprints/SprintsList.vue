@@ -16,14 +16,6 @@
                         </div>
                     </li>
                 </ul>
-                <div>
-                    <h5 class="text-center my-4">Sort By</h5>
-                    <button class="btn btn-success btn-block shadow" @click="sortByTasksDone">Tasks Done</button>
-                    <button class="btn btn-danger btn-block shadow" @click="sortByTasksNotDone">Tasks Not Done</button>
-                </div>
-            </div>
-            <div v-if="!addNewSprint && sprints.length" class="mt-4">
-                <button class="btn btn-secondary btn-block shadow" @click="addNewSprint = true">Create New Task</button>
             </div>
         </div>
         <div 
@@ -39,9 +31,12 @@
                 <sprint-details
                     v-if="choisenSprint"
                     :data="choisenSprint"
-                    @sprintDeleted="onSprintDeleted()"
-                    @sprintEditing="onSprintEditing()"
+                    @sprintDeleted="onSprintDeleted"
+                    @sprintEditing="onSprintEditing"
                 ></sprint-details>
+                <div v-if="!addNewSprint && sprints.length" class="mt-4 d-flex justify-content-end">
+                    <button class="btn btn-secondary shadow" @click="addNewSprint = true">Create New Sprint</button>
+                </div>
             </div>
             <div v-if="addNewSprint || sprints.length === 0">
                 <sprint-add
@@ -72,8 +67,6 @@ export default {
             sprints:[],
             sprintDetail:null,
             addNewSprint:false,
-            sortByTasksDoneFactor:1,
-            sortByTasksNotDoneFactor:1,
             editMode:false
         }
     },
@@ -108,43 +101,17 @@ export default {
                 return editedSprint.id === sprint.id ? editedSprint : sprint;
             });
             this.sprintDetail=editedSprint;
-        },
-        sortByTasksDone(){
-            this.sprints.sort((a,b)=>{
-                let rslt;
-                if(parseInt(a.tasksDone) > parseInt(b.tasksDone)){
-                    rslt = -1;
-                } else if (parseInt(a.tasksDone) < parseInt(b.tasksDone)){
-                     rslt = 1
-                } else {
-                     rslt = 0;
-                }
-                return rslt * this.sortByTasksDoneFactor;
-            });
-            this.sortByTasksDoneFactor = -1 * this.sortByTasksDoneFactor;
-            this.sortByTasksNotDoneFactor = 1;
-        },
-        sortByTasksNotDone(){
-            this.sprints.sort((a,b)=>{
-                let rslt;
-                if(parseInt(a.tasksNotDone) > parseInt(b.tasksNotDone)){
-                    rslt = -1;
-                } else if (parseInt(a.tasksNotDone) < parseInt(b.tasksNotDone)){
-                     rslt = 1
-                } else {
-                     rslt = 0;
-                }
-                return rslt * this.sortByTasksNotDoneFactor;
-            });
-            this.sortByTasksNotDoneFactor = -1 * this.sortByTasksNotDoneFactor;
-            this.sortByTasksDoneFactor = 1;
         }
     },
-    mounted(){
+    created(){
         axios.get('/api/projects/'+this.$route.params.project_id+'/sprints')
         .then(({data})=>{
             this.sprints=data;
+            window.event.$emit('dataFetched');
         })
+    },
+    beforeCreate() {
+        window.event.$emit('pageBeforeCreate');
     }
 }
 </script>

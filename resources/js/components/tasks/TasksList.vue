@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-md-4" v-if="tasksData.length">
+        <div class="col-md-4" v-if="tasks.length">
             <div class="text-center mb-5">
                 <h4>Tasks List</h4>
             </div>
@@ -13,44 +13,40 @@
                         'light-bg-danger' : !task.is_done}"
                     @click="choiseATask(task)"
                 >
-                <i class="fa fa-check-circle mr-2" v-if="task.is_done"></i>
-                <i class="fa fa-exclamation-triangle mr-2" v-if="!task.is_done"></i>
-                {{task.title | truncate}}
+                    <span>
+                        <i class="fa fa-check-circle mr-2" v-if="task.is_done"></i>
+                        <i class="fa fa-exclamation-triangle mr-2" v-if="!task.is_done"></i>
+                        {{task.title | truncate}}
+                    </span>
                 </li>
             </ul>
-            <div v-if="tasksData.length">
-                <h5 class="text-center my-4">Filter By</h5>
-                <button class="btn btn-success btn-block shadow" @click="filterByDone">Done</button>
-                <button class="btn btn-danger btn-block shadow" @click="filterByNotDone">Not Done</button>
-                <button class="btn btn-primary btn-block shadow" @click="giveAll">All</button>
-            </div>
-            <div v-if="!addNewTask && tasksData.length" class="mt-4">
-                <button class="btn btn-secondary btn-block shadow" @click="addNewTask=!addNewTask">Create New Task</button>
-            </div>
         </div>
         <div 
             :class="{
-                'col-md-8':tasksData.length,
-                'col':tasksData.length === 0
+                'col-md-8':tasks.length,
+                'col':tasks.length === 0
             }"
         >
-            <div v-if="!addNewTask && tasksData.length && !editMode">
+            <div v-if="!addNewTask && tasks.length && !editMode">
                 <div class="text-center mb-5">
                     <h4>Task Detail</h4>
                 </div>
                 <task-details
                     v-if="choisenTask"
                     :data="choisenTask"
-                    @taskDone="onTaskis_done()"
-                    @taskUnDone="onTaskIsUnDone()"
-                    @taskDeleted="onTaskDeleted()"
+                    @taskDone="onTaskDone"
+                    @taskUnDone="onTaskIsUnDone"
+                    @taskDeleted="onTaskDeleted"
                     @taskEditing="onTaskEditing"
                 ></task-details>
-                <div class="alert alert-info" role="alert" v-if="!choisenTask">
+                <div v-if="!addNewTask && tasks.length" class="d-flex justify-content-end mt-4">
+                    <button class="btn btn-secondary shadow" @click="addNewTask=!addNewTask">Create New Task</button>
+                </div>
+                <div class="alert alert-dark shadow" role="alert" v-if="!choisenTask">
                     No tasks found!
                 </div>
             </div>
-            <div v-if="addNewTask || tasksData.length === 0">
+            <div v-if="addNewTask || tasks.length === 0">
                 <task-add
                     mode="create"
                     @newTaskCreated="onNewTaskCreated($event)"
@@ -73,7 +69,6 @@ export default {
     data(){
         return {
             tasks:[],
-            tasksData:[],
             taskDetail:null,
             addNewTask:false,
             editMode:false
@@ -94,13 +89,14 @@ export default {
             this.addNewTask=false;
             this.taskDetail=task;
         },
-        onTaskis_done(){
-            this.choisenTask.is_done=true;
+        onTaskDone(){
+            this.taskDetail.is_done=true;
         },
         onTaskIsUnDone(){
-            this.choisenTask.is_done=false;
+            this.taskDetail.is_done=false;
         },
         onNewTaskCreated(newTask){
+            this.tasks.unshift(newTask);
             this.tasks.unshift(newTask);
             this.addNewTask=false;
             this.taskDetail=newTask;
@@ -109,7 +105,7 @@ export default {
             this.tasks=this.tasks.filter(task=>{
                 return this.choisenTask.id !== task.id;
             });
-            this.tasksData=this.tasksData.filter(task=>{
+            this.tasks=this.tasks.filter(task=>{
                 return this.choisenTask.id !== task.id;
             });
             this.taskDetail = null;
@@ -122,34 +118,21 @@ export default {
             this.tasks = this.tasks.map(task => {
                 return editedTask.id === task.id ? editedTask : task;
             });
-            this.tasksData = this.tasksData.map(task => {
+            this.tasks = this.tasks.map(task => {
                 return editedTask.id === task.id ? editedTask : task;
             });
             this.taskDetail=editedTask;
-        },
-        giveAll(){
-            this.tasks = this.tasksData;
-            this.taskDetail = null;
-        },
-        filterByDone(){
-            this.tasks = this.tasksData.filter(task => {
-                return task.is_done;
-            });
-            this.taskDetail = null;
-        },
-        filterByNotDone(){
-            this.tasks = this.tasksData.filter(task => {
-                return !task.is_done;
-            });
-            this.taskDetail = null;
         }
     },
     created(){
         axios.get('/api/sprints/'+this.$route.params.sprint_id+'/tasks')
         .then(({data})=>{
             this.tasks = data;
-            this.tasksData = data;
+            window.event.$emit('dataFetched');
         })
+    },
+    beforeCreate() {
+        window.event.$emit('pageBeforeCreate');
     }
 }
 </script>

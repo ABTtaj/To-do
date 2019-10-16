@@ -7,14 +7,17 @@
         }" 
     >
         <div class="card-header">
-            <h5 class="card-title m-0" :class="{'task-done':data.is_done}">{{data.title}}</h5>
+            <h5 class="align-items-end card-title d-flex justify-content-between m-0" :class="{'task-done':data.is_done}">
+                <span>{{data.title}}</span> 
+                <span class="h6 m-0">{{data.created_at}}</span>
+            </h5>
         </div>
         <div class="card-body">
             <p class="card-text mx-4 my-2" :class="{'task-done':data.is_done}">{{data.description}}</p>
             <div class="d-flex justify-content-between mt-3">
                 <div>
                     <button class="btn btn-success shadow" @click="taskDone" v-if="!data.is_done">Done</button>
-                    <button class="btn btn-danger shadow" @click="unDoneTask" v-if="data.is_done">Not Done Yet</button>
+                    <button class="btn btn-secondary shadow" @click="unDoneTask" v-if="data.is_done">Not Done Yet</button>
                 </div>
                 <div>
                     <button class="btn btn-primary shadow" @click="editTask">Edit</button>
@@ -38,6 +41,7 @@ export default {
             }).
             then(({data})=>{
                 this.$emit('taskDone');
+                window.flash('success','Task Done');
             });
         },
         unDoneTask(){
@@ -48,12 +52,14 @@ export default {
             }).
             then(({data})=>{
                 this.$emit('taskUnDone');
+                window.flash('danger','Task Undone');
             });
         },
         deleteTask(){
             axios.delete('/api/tasks/'+this.data.id)
             .then(({data})=>{
                 this.$emit('taskDeleted');
+                window.flash('success','Task Deleted');
             })
         },
         editTask(){

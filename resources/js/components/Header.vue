@@ -1,6 +1,6 @@
 <template>
-    <div class="align-items-center bg-secondary d-flex justify-content-between p-3 text-white shadow">
-        <router-link tag="div" to="/" class="nav-title-item h2 m-0">To Do</router-link>
+    <div class="align-items-center bg-dark d-flex justify-content-between p-3 text-white shadow">
+        <router-link tag="div" to="/" class="nav-title-item h2 m-0 p-0 ml-4"><img src="../../images/logo.png" alt="logo"></router-link>
         <div class="d-flex">
             <router-link tag="div" to="/" class="nav-link-item">
                 Projects

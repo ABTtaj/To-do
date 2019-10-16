@@ -17,8 +17,8 @@ const router = new VueRouter({
 })
 
 Vue.filter('truncate', function (value) {
-    if(value.length > 15){
-        return value.slice(0,15) + '...';
+    if(value.length > 40){
+        return value.slice(0,40) + '...';
     } else {
         return value;
     }

@@ -16,7 +16,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::all();
+        return Project::latest()->get();
     }
 
     /**
@@ -37,29 +37,20 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        try{
-            $arguments = request()->validate([
-                'title'=>'required',
-                'description' =>'required'
-            ],
-            [
-                'title.required'=>'Please enter a valid title',
-                'description.required'=>'Please enter a valid description'
-            ]);
-            
-            Project::create($arguments);
+        $arguments = request()->validate([
+            'title'=>'required',
+            'description' =>'required'
+        ],
+        [
+            'title.required'=>'Please enter a valid title',
+            'description.required'=>'Please enter a valid description'
+        ]);
         
-            return [
-                'message' => 'Project Created',
-                'status' => true
-            ];
-        }catch(ValidationException $e){
-            return [
-                'message' => $e->validator->customMessages,
-                'status' => false
-            ];
-        }
-        
+        Project::create($arguments);
+    
+        return [
+            'message' => 'Project Created'
+        ];
     }
 
     /**
@@ -93,28 +84,21 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        try{
-            $arguments = request()->validate([
-                'title'=>'required',
-                'description' =>'required'
-            ],
-            [
-                'title.required'=>'Please enter a valid title',
-                'description.required'=>'Please enter a valid description'
-            ]);
-            
-            $project->update($arguments);
+        $arguments = request()->validate([
+            'title'=>'required',
+            'description' =>'required'
+        ],
+        [
+            'title.required'=>'Please enter a valid title',
+            'description.required'=>'Please enter a valid description'
+        ]);
         
-            return [
-                'message' => 'Project Updated',
-                'status' => true
-            ];
-        }catch(ValidationException $e){
-            return [
-                'message' => $e->validator->customMessages,
-                'status' => false
-            ];
-        }
+        $project->update($arguments);
+    
+        return [
+            'message' => 'Project Updated',
+        ];
+ 
     }
 
     /**

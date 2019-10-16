@@ -3,14 +3,9 @@
         class="card shadow"  
     >
         <div class="card-header">
-            <h5 class="card-title d-flex justify-content-between m-0">
-                <span>
-                    {{data.title}}
-                </span>
-                <div>
-                    <span class="badge badge-success">{{data.tasksDone}}</span>
-                    <span class="badge badge-danger">{{data.tasksNotDone}}</span>
-                </div>
+            <h5 class="align-items-end card-title d-flex justify-content-between m-0">
+                <span>{{data.title}}</span> 
+                <span class="h6 m-0 text-black-50">{{data.created_at}}</span>
             </h5>
         </div>
         <div class="card-body">
@@ -36,6 +31,7 @@ export default {
         deleteSprint(){
             axios.delete('/api/sprints/'+this.data.id).then(({data})=>{
                 this.$emit('sprintDeleted');
+                window.flash('success','Sprint Deleted');
             });
         },
         editSprint(){

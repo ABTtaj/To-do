@@ -27,29 +27,21 @@ class SprintController extends Controller
      */
     public function store(Request $request,Project $project)
     {
-        try{
-            $arguments = request()->validate([
-                'title'=>'required',
-                'description'=>'required'
-            ],
-            [
-                'title.required'=>'Enter a valid title',
-                'description.required'=>'Enter a valid description'
-            ]);
+        $arguments = request()->validate([
+            'title'=>'required',
+            'description'=>'required'
+        ],
+        [
+            'title.required'=>'Enter a valid title',
+            'description.required'=>'Enter a valid description'
+        ]);
 
-            $sprint=$project->sprints()->create($arguments);
+        $sprint=$project->sprints()->create($arguments);
 
-            return [
-                'id'=> $sprint->id,
-                'message'=>'Sprint Created',
-                'status'=>true
-            ];
-        } catch (ValidationException $e){
-            return [
-                'message'=>$e->validator->customMessages,
-                'status'=>false
-            ];
-        }
+        return [
+            'id'=> $sprint->id,
+            'message'=>'Sprint Created',
+        ];
     }
 
     /**
@@ -72,29 +64,21 @@ class SprintController extends Controller
      */
     public function update(Request $request, Sprint $sprint)
     {
-        try{
-            $arguments = request()->validate([
-                'title'=>'required',
-                'description'=>'required'
-            ],
-            [
-                'title.required'=>'Enter a valid title',
-                'description.required'=>'Enter a valid description'
-            ]);
+        $arguments = request()->validate([
+            'title'=>'required',
+            'description'=>'required'
+        ],
+        [
+            'title.required'=>'Enter a valid title',
+            'description.required'=>'Enter a valid description'
+        ]);
 
-            $sprint->update($arguments);
+        $sprint->update($arguments);
 
-            return [
-                'message'=>'Sprint Updated',
-                'status'=>true
-            ];
-
-        } catch (ValidationException $e){
-            return [
-                'message'=>$e->validator->customMessages,
-                'status'=>false
-            ];
-        }
+        return [
+            'message'=>'Sprint Updated',
+            'status'=>true
+        ];
     }
 
     /**

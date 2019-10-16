@@ -26,29 +26,22 @@ class TaskController extends Controller
      */
     public function store(Request $request,Sprint $sprint)
     {
-        try{
-            $arguments = request()->validate([
-                'title'=>'required',
-                'description'=>'required'
-            ],
-            [
-                'title.required'=>'Enter a valid title',
-                'description.required'=>'Enter a valid description'
-            ]);
+        $arguments = request()->validate([
+            'title'=>'required',
+            'description'=>'required'
+        ],
+        [
+            'title.required'=>'Enter a valid title',
+            'description.required'=>'Enter a valid description'
+        ]);
 
-            $task = $sprint->tasks()->create($arguments);
+        $task = $sprint->tasks()->create($arguments);
 
-            return [
-                'id'=>$task->id,
-                'message'=>'Task Created',
-                'status'=>true
-            ];
-        } catch (ValidationException $e){
-            return [
-                'message'=>$e->validator->customMessages,
-                'status'=>false
-            ];
-        }
+        return [
+            'id'=>$task->id,
+            'message'=>'Task Created',
+            'status'=>true
+        ];
     }
 
     /**
@@ -71,29 +64,22 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        try{
-            $arguments = request()->validate([
-                'title'=>'required',
-                'description'=>'required',
-                'is_done'=>'nullable'
-            ],
-            [
-                'title.required'=>'Enter a valid title',
-                'description.required'=>'Enter a valid description'
-            ]);
+        $arguments = request()->validate([
+            'title'=>'required',
+            'description'=>'required',
+            'is_done'=>'nullable'
+        ],
+        [
+            'title.required'=>'Enter a valid title',
+            'description.required'=>'Enter a valid description'
+        ]);
 
-            $task->update($arguments);
+        $task->update($arguments);
 
-            return [
-                'message'=>'Task Updated',
-                'status'=>true
-            ];
-        } catch (ValidationException $e){
-            return [
-                'message'=>$e->validator->customMessages,
-                'status'=>false
-            ];
-        }
+        return [
+            'message'=>'Task Updated',
+            'status'=>true
+        ];
     }
 
     /**

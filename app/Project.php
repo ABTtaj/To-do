@@ -9,10 +9,10 @@ class Project extends Model
     protected $guarded=[];
 
     public function sprints(){
-        return $this->hasMany(Sprint::class);
+        return $this->hasMany(Sprint::class)->latest();
     }
 
     public function tasks(){
-        return $this->hasManyThrough(Task::class,Sprint::class);
+        return $this->hasManyThrough(Task::class,Sprint::class)->latest();
     }
 }

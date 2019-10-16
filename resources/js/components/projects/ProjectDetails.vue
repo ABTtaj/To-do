@@ -1,9 +1,9 @@
 <template>
     <div class="card shadow">
         <div class="card-header">
-            <h5 class="card-title d-flex justify-content-between m-0">
+            <h5 class="align-items-end card-title d-flex justify-content-between m-0">
                 <span>{{data.title}}</span> 
-                <span class="badge badge-danger"></span>
+                <span class="h6 m-0 text-black-50">{{data.created_at}}</span>
             </h5>
         </div>
         <div class="card-body">
@@ -30,6 +30,7 @@ export default {
             axios.delete('/api/projects/'+this.data.id)
             .then(({data}) => {
                 this.$emit('projectDeleted');
+                window.flash('success','Project Deleted');
             })
         }
     }
