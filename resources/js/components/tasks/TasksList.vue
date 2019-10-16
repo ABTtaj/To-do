@@ -96,8 +96,7 @@ export default {
             this.taskDetail.is_done=false;
         },
         onNewTaskCreated(newTask){
-            this.tasks.unshift(newTask);
-            this.tasks.unshift(newTask);
+            this.tasks.push(newTask);
             this.addNewTask=false;
             this.taskDetail=newTask;
         },

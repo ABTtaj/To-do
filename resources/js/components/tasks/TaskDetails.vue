@@ -36,7 +36,7 @@ export default {
         taskDone(){
             axios.put('/api/tasks/'+this.data.id,{
                 title:this.data.title,
-                description:this.data.title,
+                description:this.data.description,
                 is_done:true
             }).
             then(({data})=>{
@@ -47,7 +47,7 @@ export default {
         unDoneTask(){
             axios.put('/api/tasks/'+this.data.id,{
                 title:this.data.title,
-                description:this.data.title,
+                description:this.data.description,
                 is_done:false
             }).
             then(({data})=>{

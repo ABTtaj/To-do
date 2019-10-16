@@ -9,7 +9,7 @@ class Sprint extends Model
     protected $guarded = [];
 
     public function tasks(){
-        return $this->hasMany(Task::class)->latest();
+        return $this->hasMany(Task::class);
     }
 
     public function project(){

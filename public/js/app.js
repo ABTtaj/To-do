@@ -2666,7 +2666,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.put('/api/tasks/' + this.data.id, {
         title: this.data.title,
-        description: this.data.title,
+        description: this.data.description,
         is_done: true
       }).then(function (_ref) {
         var data = _ref.data;
@@ -2681,7 +2681,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.put('/api/tasks/' + this.data.id, {
         title: this.data.title,
-        description: this.data.title,
+        description: this.data.description,
         is_done: false
       }).then(function (_ref2) {
         var data = _ref2.data;
@@ -2818,8 +2818,7 @@ __webpack_require__.r(__webpack_exports__);
       this.taskDetail.is_done = false;
     },
     onNewTaskCreated: function onNewTaskCreated(newTask) {
-      this.tasks.unshift(newTask);
-      this.tasks.unshift(newTask);
+      this.tasks.push(newTask);
       this.addNewTask = false;
       this.taskDetail = newTask;
     },
